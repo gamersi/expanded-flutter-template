@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Der Knopf wurde $_counter mal gedrückt',
+              'You clicked the button $_counter times',
               style: Theme.of(context).textTheme.headline5,
             ),
             TextButton(
