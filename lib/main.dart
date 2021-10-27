@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -34,9 +33,24 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+    _loadCounter();
+  }
+
+  void _loadCounter() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _counter++;
+      _counter = (prefs.getInt('counter') ?? 0);
+    });
+  }
+
+  void _incrementCounter() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _counter = (prefs.getInt('counter') ?? 0) + 1;
+      prefs.setInt('counter', _counter);
     });
 
     if (_counter == 50) {
@@ -88,9 +102,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _resetCounter() {
+  void _resetCounter() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       _counter = 0;
+      prefs.setInt('counter', 0);
     });
   }
 
@@ -123,59 +139,62 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _bottomSheet(context) {
     showModalBottomSheet(
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-      context: context,
-      builder: (BuildContext v) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.restore),
-              title: const Text("Reset"),
-              onTap: () {
-                _resetCounter();
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text("Informationen"),
-              onTap: () {
-                Navigator.pop(context);
-                _aboutPage(context);
-              },
-            ),
-          ],
-        );
-      }
-    );
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+        context: context,
+        builder: (BuildContext v) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.restore),
+                title: const Text("Reset"),
+                onTap: () {
+                  _resetCounter();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text("Informationen"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _aboutPage(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   _aboutPage(context) {
     showModalBottomSheet(
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-      context: context,
-      builder: (BuildContext v) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("by gamer_si"),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.copyright),
-              title: const Text("gamer_si, 2021"),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      }
-    );
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12), 
+                topRight: Radius.circular(12))),
+        context: context,
+        builder: (BuildContext v) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text("by gamer_si"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.copyright),
+                title: const Text("gamer_si, 2021"),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 }
